@@ -4,12 +4,12 @@ Simple command to give you password-less SSH login on remote servers:
 
     ssh-forever username@yourserver.com
     
-== Installation
+## Installation
 
     gem sources --add http://gemcutter.org
     gem install ssh-forever
 
-== Example:
+## Example:
 
     [matt@bowie ssh-forever (master)]$ ./bin/ssh-forever mattwynne@mattwynne.net
     You do not appear to have a public key. I expected to find one at /Users/matt/.ssh/id_rsa.pub
@@ -28,9 +28,13 @@ Simple command to give you password-less SSH login on remote servers:
     Any malicious and/or unauthorized activity is strictly forbidden.
     All activity may be logged by DreamHost Web Hosting.
 
-    Last login: Sat Aug 15 17:24:17 2009 from 212.69.58.104
+    Last login: Sat Aug 15 17:24:17 2009
     [broncos]$ 
 
-== Copyright
+## Why
+
+Because I can never remember how to do it by hand. Now I don't have to, and nor do you.
+
+## Copyright
 
 Copyright (c) 2009 Matt Wynne. See LICENSE for details.
