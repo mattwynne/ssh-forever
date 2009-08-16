@@ -5,7 +5,7 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "ssh-forever"
-    gem.summary = %Q{Smooth password-less SSH setup}
+    gem.summary = %Q{Butter-smooth password-less SSH setup}
     gem.description = %Q{Provides a replacement for the SSH command which automatically copies your public key while logging in}
     gem.email = "matt@mattwynne.net"
     gem.homepage = "http://github.com/mattwynne/ssh-forever"
