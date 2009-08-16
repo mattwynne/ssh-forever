@@ -10,8 +10,9 @@ module SecureShellForever
         end
         generate_public_key
       end
+      puts "Copying your public key to the remote server. Prepare to enter your password for the last time."
       `ssh #{login} "#{remote_command}"`
-      puts "Your public key has been copied to the remote server. From now on you can just use plain old 'ssh'. Logging you in..."
+      puts "Success. From now on you can just use plain old 'ssh'. Logging you in..."
       exec "ssh #{login}"
     end
 
@@ -26,7 +27,7 @@ module SecureShellForever
     end
 
     def key
-      `cat #{public_key_path}`
+      `cat #{public_key_path}`.strip
     end
     
     def generate_public_key
@@ -38,8 +39,8 @@ module SecureShellForever
           end
         end
       end
-      
-      flunk("Unable to generate your public key.") unless File.exists?(public_key_path)
+      Process.wait
+      flunk("Oh dear. I was unable to generate your public key. Run the command 'ssh-keygen -t rsa' manually to find out why.") unless $? == 0
     end
     
     def flunk(message)
