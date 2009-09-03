@@ -1,6 +1,6 @@
 module SecureShellForever
   class << self
-    def run(login)
+    def run(login, options = {})
       unless File.exists?(public_key_path)
         STDERR.puts "You do not appear to have a public key. I expected to find one at #{public_key_path}\n"
         STDERR.print "Would you like me to generate one? [Y/n]"
@@ -10,10 +10,16 @@ module SecureShellForever
         end
         generate_public_key
       end
+      
+      args = [
+          ' ',
+          ("-p #{options[:port]}" if options[:port] =~ /^\d+$/)
+        ].compact.join(' ')
+        
       puts "Copying your public key to the remote server. Prepare to enter your password for the last time."
-      `ssh #{login} "#{remote_command}"`
+      `ssh #{login}#{args} "#{remote_command}"`
       puts "Success. From now on you can just use plain old 'ssh'. Logging you in..."
-      exec "ssh #{login}"
+      exec "ssh #{login}#{args}"
     end
 
     def remote_command
