@@ -18,6 +18,8 @@ module SecureShellForever
         
       puts "Copying your public key to the remote server. Prepare to enter your password for the last time."
       `ssh #{login}#{args} "#{remote_command}"`
+      exit 1 unless $?.exitstatus == 0
+      
       puts "Success. From now on you can just use plain old 'ssh'. Logging you in..."
       exec "ssh #{login}#{args}"
     end

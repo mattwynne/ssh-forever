@@ -2,7 +2,7 @@
 
 Simple command to give you password-less SSH login on remote servers:
 
-    ssh-forever username@yourserver.com
+    ssh-forever username@yourserver.com [-p port]
     
 ## Installation
 

@@ -4,9 +4,11 @@ $:.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 require 'ssh-forever'
 require 'optparse'
 
+help = 'Usage: ssh-forever username@yourserver.com [-p port]'
+
 options = {}
 OptionParser.new do |opts|
-  opts.banner = 'Usage: ssh-forever username@yourserver.com [-p port]'
+  opts.banner = help
   
   opts.on('-p', '--port [PORT]', 'port') do |port|
     options[:port] = port
@@ -14,4 +16,10 @@ OptionParser.new do |opts|
 end.parse!
 
 login = ARGV[0]
+
+if login.nil?
+  puts help 
+  exit 1
+end
+
 SecureShellForever.run(login, options)
