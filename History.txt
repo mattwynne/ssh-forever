@@ -1,0 +1,8 @@
+== 0.2.1 2009-09-03
+
+=== New Features
+* Ability to specify a port number when connecting. (Jonas Grimfelt)
+
+=== Changed Features
+* Better feedback when you enter no hostname or an invalid hostname to connect to. (Matt Wynne)
+
