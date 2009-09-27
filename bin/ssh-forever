@@ -14,7 +14,7 @@ OptionParser.new do |opts|
     options[:port] = port
   end
 
-  opts.on('-i', '--identity_file [IDENTIFY_FILE]', 'identity_file') do |identity_file|
+  opts.on('-i', '--identity_file [IDENTITY_FILE]', 'identity_file') do |identity_file|
     options[:identity_file] = identity_file
   end
 end.parse!
