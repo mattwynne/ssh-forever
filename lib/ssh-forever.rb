@@ -1,6 +1,13 @@
-module SecureShellForever
-  class << self
-    def run(login, options = {})
+module SshForever
+  VERSION = '0.2.1'
+
+  class SecureShellForever
+    def initialize(login, options = {})
+      @login   = login
+      @options = options
+    end
+
+    def run
       unless File.exists?(public_key_path)
         STDERR.puts "You do not appear to have a public key. I expected to find one at #{public_key_path}\n"
         STDERR.print "Would you like me to generate one? [Y/n]"
@@ -10,19 +17,21 @@ module SecureShellForever
         end
         generate_public_key
       end
-      
+
       args = [
           ' ',
-          ("-p #{options[:port]}" if options[:port] =~ /^\d+$/)
+          ("-p #{@options[:port]}" if @options[:port] =~ /^\d+$/)
         ].compact.join(' ')
-        
+
       puts "Copying your public key to the remote server. Prepare to enter your password for the last time."
-      `ssh #{login}#{args} "#{remote_command}"`
+      `ssh #{@login}#{args} "#{remote_command}"`
       exit 1 unless $?.exitstatus == 0
-      
+
       puts "Success. From now on you can just use plain old 'ssh'. Logging you in..."
-      exec "ssh #{login}#{args}"
+      exec "ssh #{@login}#{args}"
     end
+
+  private
 
     def remote_command
       commands = []
@@ -37,7 +46,7 @@ module SecureShellForever
     def key
       `cat #{public_key_path}`.strip
     end
-    
+
     def generate_public_key
       silence_stream(STDOUT) do
         silence_stream(STDERR) do
@@ -50,16 +59,16 @@ module SecureShellForever
       Process.wait
       flunk("Oh dear. I was unable to generate your public key. Run the command 'ssh-keygen -t rsa' manually to find out why.") unless $? == 0
     end
-    
+
     def flunk(message)
       STDERR.puts message
       exit 1
     end
-    
+
     def public_key_path
-      File.expand_path('~/.ssh/id_rsa.pub')
+      File.expand_path(@options[:identity_file] || '~/.ssh/id_rsa.pub')
     end
-    
+
     def silence_stream(stream)
       old_stream = stream.dup
       stream.reopen(RUBY_PLATFORM =~ /mswin/ ? 'NUL:' : '/dev/null')
