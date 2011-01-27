@@ -17,6 +17,10 @@ OptionParser.new do |opts|
   opts.on('-i', '--identity_file [IDENTITY_FILE]', 'identity_file') do |identity_file|
     options[:identity_file] = identity_file
   end
+
+  opts.on('-n', '--name [NAME]', 'name') do |name|
+    options[:name] = name
+  end
 end.parse!
 
 login = ARGV[0]

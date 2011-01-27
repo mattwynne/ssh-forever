@@ -27,8 +27,25 @@ module SshForever
       `ssh #{@login}#{args} "#{remote_command}"`
       exit 1 unless $?.exitstatus == 0
 
+      if @options[:name]
+        puts "Creating host entry in local ssh config with name #{@options[:name]}"
+        File.open(File.expand_path("~/.ssh/config"), "a") do |config|
+          #ah heredocs, how I hate you...
+          host_config = <<-STUFF
+
+Host #{@options[:name]}
+HostName #{@login.split("@")[1]}
+User #{@login.split("@")[0]}
+          STUFF
+          config << host_config
+        end
+        login_command = "ssh #{@options[:name]}#{args}"
+      else
+        login_command = "ssh #{@login}#{args}"
+      end
+
       puts "Success. From now on you can just use plain old 'ssh'. Logging you in..."
-      exec "ssh #{@login}#{args}"
+      exec login_command
     end
 
   private

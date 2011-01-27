@@ -2,7 +2,7 @@
 
 Simple command to give you password-less SSH login on remote servers:
 
-    ssh-forever username@yourserver.com [-p port] [-i identity_file]
+    ssh-forever username@yourserver.com [-p port] [-i identity_file] [-n name_for_future_use]
 
 ## Installation
 
@@ -11,7 +11,7 @@ Simple command to give you password-less SSH login on remote servers:
 
 ## Example:
 
-    [matt@bowie ssh-forever (master)]$ ssh-forever mattwynne@mattwynne.net
+    [matt@bowie ssh-forever (master)]$ ssh-forever mattwynne@mattwynne.net -n dreamhost
     You do not appear to have a public key. I expected to find one at /Users/matt/.ssh/id_rsa.pub
     Would you like me to generate one? [Y/n]y
     Copying your public key to the remote server. Prepare to enter your password for the last time.
@@ -29,7 +29,8 @@ Simple command to give you password-less SSH login on remote servers:
     All activity may be logged by DreamHost Web Hosting.
 
     Last login: Sat Aug 15 17:24:17 2009
-    [broncos]$
+    [broncos]$ exit
+    [matt@bowie ssh-forever (master)]$ ssh dreamhost
 
 ## Why
 
