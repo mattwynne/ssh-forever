@@ -1,3 +1,8 @@
+== 0.2.3 2010-02-01
+
+=== New Features
+* Use the -n switch to automatically add a friendly name to your ~/.ssh/config (Tom Stuart)
+
 == 0.2.2 2009-09-27
 
 === New Features
