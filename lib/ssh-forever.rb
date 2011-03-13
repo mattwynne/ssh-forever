@@ -5,6 +5,7 @@ module SshForever
     def initialize(login, options = {})
       @login   = login
       @options = options
+      local_ssh_config_path
     end
 
     def run
@@ -50,13 +51,21 @@ User #{@login.split("@")[0]}
 
   private
 
+    def local_ssh_config_path
+      @local_ssh_config_path ||= Pathname('~/').expand_path.realpath
+    end
+
+    def authorized_keys
+      (@local_ssh_config_path + '.ssh' + 'authorized_keys2').exist? ? 'authorized_keys2' : 'authorized_keys'
+    end
+
     def remote_command
       commands = []
-      commands << 'mkdir -p ~/.ssh'
-      commands << 'chmod 700 ~/.ssh'
-      commands << 'touch ~/.ssh/authorized_keys'
-      commands << 'chmod 700 ~/.ssh/authorized_keys'
-      commands << "echo #{key} >> ~/.ssh/authorized_keys"
+      commands << "mkdir -p #{@local_ssh_config_path + 'ssh'}"
+      commands << "chmod 700 #{@local_ssh_config_path + '.ssh'}"
+      commands << "touch #{@local_ssh_config_path + '.ssh' + authorized_keys}"
+      commands << "chmod 700 #{@local_ssh_config_path + '.ssh' + authorized_keys}"
+      commands << "echo #{key} >> #{@local_ssh_config_path + '.ssh' + authorized_keys}"
       commands.join(' && ')
     end
 
