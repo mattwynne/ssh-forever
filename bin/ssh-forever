@@ -17,6 +17,10 @@ OptionParser.new do |opts|
     options[:debug] = boolean
   end
 
+  opts.on('-l', '--login', "Open SSH connection and stay logged in.") do |boolean|
+    options[:login] = true
+  end
+
    opts.on('-p', '--port [PORT]', Integer, "SSH server port.") do |port|
     options[:port] = port
   end

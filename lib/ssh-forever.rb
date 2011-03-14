@@ -26,6 +26,13 @@ module SshForever
       puts "Success. From now on you can just use plain old 'ssh'. Logging you in..."  unless @options[:quiet]
       status = run_shell_cmd(ssh_login(args))
       exit 1 unless status.exitstatus.to_i == 0
+      if @options[:login]
+        if @options[:name]
+          `ssh #{@options[:name]}#{args}`   #TODO: fix this so that remote session is left open
+        else
+          `ssh #{@login}#{args}`
+        end
+      end
     end
 
   private
