@@ -9,6 +9,10 @@ help = 'Usage: ssh-forever username@yourserver.com [-p port] [-i identity_file]'
 options = {}
 OptionParser.new do |opts|
   opts.banner = help
+  opts.on('-a', '--auto', "Run without prompting.") do |boolean|
+    options[:auto] = boolean
+  end
+
   opts.on('-d', '--debug', "Run SSH verbosely.") do |boolean|
     options[:debug] = boolean
   end
@@ -23,6 +27,11 @@ OptionParser.new do |opts|
 
   opts.on('-n', '--name [NAME]', String, "SSH host name alias you wish to use.") do |name|
     options[:name] = name
+  end
+
+  opts.on('-q', '--quite', "Run without output.") do |boolean|
+    options[:quiet] = true
+    options[:debug] = false
   end
 
   opts.on('-s', '--strict', "SSH with stricthostkeychecking=yes (deafult:no)") do |boolean|
