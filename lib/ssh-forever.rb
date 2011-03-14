@@ -68,10 +68,9 @@ module SshForever
 
     def run_shell_cmd(cmd)
       status = Open4::popen4('sh') do |pid, stdin, stdout, stderr|
+        puts "debug: #{cmd}"  if @options[:debug]
         stdin.puts cmd
         stdin.close
-        puts "stdout     : #{ stdout.read.strip }" if stdout.read.strip.length>0 and !@options[:quiet]
-        puts "stderr     : #{ stderr.read.strip }" if stderr.read.strip.length>0 and !@options[:quiet]
       end
       status
     end
