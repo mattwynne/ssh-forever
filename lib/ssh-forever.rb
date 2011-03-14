@@ -1,11 +1,15 @@
+require 'pathname'
+require 'open4'
+
 module SshForever
-  VERSION = '0.2.1'
+  VERSION = '0.3.0'
 
   class SecureShellForever
     def initialize(login, options = {})
       @login   = login
       @options = options
       local_ssh_config_path
+      local_key_path
     end
 
     def run
@@ -19,34 +23,13 @@ module SshForever
         generate_public_key
       end
 
-      args = [
-          ' ',
-          ("-p #{@options[:port]}" if @options[:port] =~ /^\d+$/)
-        ].compact.join(' ')
+      args = ssh_args()
 
-      puts "Copying your public key to the remote server. Prepare to enter your password for the last time."
-      `ssh #{@login}#{args} "#{remote_command}"`
-      exit 1 unless $?.exitstatus == 0
-
-      if @options[:name]
-        puts "Creating host entry in local ssh config with name #{@options[:name]}"
-        File.open(File.expand_path("~/.ssh/config"), "a") do |config|
-          #ah heredocs, how I hate you...
-          host_config = <<-STUFF
-
-Host #{@options[:name]}
-HostName #{@login.split("@")[1]}
-User #{@login.split("@")[0]}
-          STUFF
-          config << host_config
-        end
-        login_command = "ssh #{@options[:name]}#{args}"
-      else
-        login_command = "ssh #{@login}#{args}"
-      end
+      copy_public_key(args)
 
       puts "Success. From now on you can just use plain old 'ssh'. Logging you in..."
-      exec login_command
+      status = run_shell_cmd(ssh_login(args))
+      exit 1 unless status.exitstatus.to_i == 0
     end
 
   private
@@ -59,49 +42,86 @@ User #{@login.split("@")[0]}
       (@local_ssh_config_path + '.ssh' + 'authorized_keys2').exist? ? 'authorized_keys2' : 'authorized_keys'
     end
 
-    def remote_command
-      commands = []
-      commands << "mkdir -p #{@local_ssh_config_path + 'ssh'}"
-      commands << "chmod 700 #{@local_ssh_config_path + '.ssh'}"
-      commands << "touch #{@local_ssh_config_path + '.ssh' + authorized_keys}"
-      commands << "chmod 700 #{@local_ssh_config_path + '.ssh' + authorized_keys}"
-      commands << "echo #{key} >> #{@local_ssh_config_path + '.ssh' + authorized_keys}"
-      commands.join(' && ')
+    def append_ssh_config
+      puts "Creating host entry in local ssh config with name #{@options[:name]}"
+      (@local_ssh_config_path + '.ssh' + 'config').open("a") do |config|
+        config << ssh_config
+      end
     end
 
-    def key
-      `cat #{public_key_path}`.strip
+    def ssh_config
+      host_config = <<-STUFF.gsub(/^ {6}/, '')
+
+      Host #{@options[:name]}
+        HostName #{@login.split("@")[1]}
+        User #{@login.split("@")[0]}
+        PreferredAuthentications publickey
+        IdentityFile #{public_key_path}
+        StrictHostKeyChecking #{@options[:strict] ? 'true' : 'false'}
+        HostKeyAlias #{@options[:name]}
+      STUFF
+    end
+
+
+    def run_shell_cmd(cmd)
+      status = Open4::popen4('sh') do |pid, stdin, stdout, stderr|
+        stdin.puts cmd
+        stdin.close
+        puts "stdout     : #{ stdout.read.strip }" if stdout.read.strip.length>0
+        puts "stderr     : #{ stderr.read.strip }" if stderr.read.strip.length>0
+      end
+      status
     end
 
     def generate_public_key
-      silence_stream(STDOUT) do
-        silence_stream(STDERR) do
-          pipe = IO.popen('ssh-keygen -t rsa', 'w')
-          6.times do
-            pipe.puts "\n"
-          end
-        end
-      end
-      Process.wait
-      flunk("Oh dear. I was unable to generate your public key. Run the command 'ssh-keygen -t rsa' manually to find out why.") unless $? == 0
+      status = run_shell_cmd(ssh_keygen)
+      flunk("Oh dear. I was unable to generate your public key. Run the command 'ssh-keygen -t rsa' manually to find out why.") unless status.exitstatus.to_i == 0
     end
+
+    def copy_public_key(args)
+      puts "Copying your public key to the remote server. Prepare to enter your password for the last time."
+      status = run_shell_cmd(ssh_keycopy(args))
+      exit 1 unless status.exitstatus.to_i == 0
+    end
+
+    def ssh_args
+      [ ' ',
+        ("-p #{@options[:port]}" if @options[:port] =~ /^\d+$/),
+        (@options[:strict] ? "-o stricthostkeychecking=yes" : "-o stricthostkeychecking=no"),
+        (@options[:debug] ? "-vvv" : "-q")
+      ].compact.join(' ')
+    end
+
+    def ssh_keygen
+      "ssh-keygen -t rsa #{@options[:debug] ? "-v" : "-q"} -C '#{local_key_path} created by ssh-forever #{Time.now.utc}' -N '' -f #{local_key_path}"
+    end
+
+    def ssh_keycopy(args)
+      "ssh-copy-id '-i #{@options[:identity_file]} #{args} #{@login}'"
+    end
+
+    def ssh_login(args)
+      if @options[:name]
+        append_ssh_config()
+        login_command = "ssh #{@options[:name]}#{args}"
+      else
+        login_command = "ssh #{@login}#{args}"
+      end
+    end
+
 
     def flunk(message)
       STDERR.puts message
       exit 1
     end
 
-    def public_key_path
-      File.expand_path(@options[:identity_file] || '~/.ssh/id_rsa.pub')
+    def local_key_path
+      @options[:identity_file] = Pathname(@options[:identity_file]).expand_path.realdirpath.to_s
     end
 
-    def silence_stream(stream)
-      old_stream = stream.dup
-      stream.reopen(RUBY_PLATFORM =~ /mswin/ ? 'NUL:' : '/dev/null')
-      stream.sync = true
-      yield
-    ensure
-      stream.reopen(old_stream)
+    def public_key_path
+      File.expand_path(@options[:identity_file] || "#{@local_ssh_config_path + '.ssh' + 'id_rsa.pub'}")
     end
+
   end
 end

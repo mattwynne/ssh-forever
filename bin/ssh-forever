@@ -9,18 +9,26 @@ help = 'Usage: ssh-forever username@yourserver.com [-p port] [-i identity_file]'
 options = {}
 OptionParser.new do |opts|
   opts.banner = help
+  opts.on('-d', '--debug', "Run SSH verbosely.") do |boolean|
+    options[:debug] = boolean
+  end
 
-  opts.on('-p', '--port [PORT]', 'port') do |port|
+   opts.on('-p', '--port [PORT]', Integer, "SSH server port.") do |port|
     options[:port] = port
   end
 
-  opts.on('-i', '--identity_file [IDENTITY_FILE]', 'identity_file') do |identity_file|
+  opts.on('-i', '--identity_file [FILE]', String, "SSH identity file path (no .pub).") do |identity_file|
     options[:identity_file] = identity_file
   end
 
-  opts.on('-n', '--name [NAME]', 'name') do |name|
+  opts.on('-n', '--name [NAME]', String, "SSH host name alias you wish to use.") do |name|
     options[:name] = name
   end
+
+  opts.on('-s', '--strict', "SSH with stricthostkeychecking=yes (deafult:no)") do |boolean|
+    options[:strict] = boolean
+  end
+
 end.parse!
 
 login = ARGV[0]

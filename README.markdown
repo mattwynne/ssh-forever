@@ -36,6 +36,9 @@ Simple command to give you password-less SSH login on remote servers:
 
 Because I can never remember how to do it by hand. Now I don't have to, and nor do you.
 
+## Options
+    ssh-forever -h
+
 ## Copyright
 
 Copyright (c) 2009 Matt Wynne. See LICENSE for details.
