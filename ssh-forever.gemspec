@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
      "lib/ssh-forever.rb",
      "ssh-forever.gemspec"
   ]
-  s.spec.add_dependency('open4', '>= 1.0.1')
+  s.add_dependency('open4', '>= 1.0.1')
   s.homepage = %q{http://github.com/mattwynne/ssh-forever}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
