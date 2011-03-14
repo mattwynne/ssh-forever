@@ -118,9 +118,9 @@ module SshForever
     def ssh_login(args)
       if @options[:name]
         append_ssh_config unless existing_ssh_config?
-        login_command = "ssh #{@options[:name]}#{args}"
+        login_command = "ssh-add; SSH_AUTH_SOCK=0 ssh #{@options[:name]}#{args} 'ssh-add;';"
       else
-        login_command = "ssh #{@login}#{args}"
+        login_command = "ssh-add; SSH_AUTH_SOCK=0 ssh #{@login}#{args} 'ssh-add;';"
       end
       login_command
     end
