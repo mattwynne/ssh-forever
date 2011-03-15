@@ -38,6 +38,14 @@ Simple command to give you password-less SSH login on remote servers:
 
 Because I can never remember how to do it by hand. Now I don't have to, and nor do you.
 
+## Features
+
+Until SSH-Forever has its own features and specs, you can get an idea of useage by:
+Looking at this [feature file][0]. The [step defintions][1].  Finally, [the API][2].
+
+[0]: https://github.com/hedgehog/cucumber-nagios/blob/aruba_ssh/features/ssh.feature
+[1]: https://github.com/hedgehog/cucumber-nagios/blob/aruba_ssh/lib/cuken/cucumber/ssh.rb
+[2]: https://github.com/hedgehog/cucumber-nagios/blob/aruba_ssh/lib/cuken/api/ssh.rb
 ## Copyright
 
 Copyright (c) 2009 Matt Wynne. See LICENSE for details.
