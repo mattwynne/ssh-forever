@@ -35,6 +35,11 @@ module SshForever
           `ssh #{@login}#{args}`
         end
       end
+      # exitstatus 2 is when ssh-add can't find an agent on local machine.
+      # We ought to switch to use Net::SSH libraries....
+      exit 1 unless status.exitstatus.to_i == 0 || status.exitstatus.to_i == 2
+    end
+
     def run_interactive
       initialization_run
       exec ssh_login_interactive(ssh_args)
@@ -155,9 +160,9 @@ module SshForever
     def ssh_login(args)
       if @options[:name]
         append_ssh_config unless existing_ssh_config?
-        login_command = "ssh-add; SSH_AUTH_SOCK=0 ssh #{@options[:name]}#{args} 'ssh-add;';"
+        login_command = "ssh-add #{@options[:identity_file]}; SSH_AUTH_SOCK=0 ssh #{@options[:name]}#{args} 'echo true;';"
       else
-        login_command = "ssh-add; SSH_AUTH_SOCK=0 ssh #{@login}#{args} 'ssh-add;';"
+        login_command = "ssh-add #{@options[:identity_file]}; SSH_AUTH_SOCK=0 ssh #{@login}#{args} 'echo true;';"
       end
       login_command
     end
