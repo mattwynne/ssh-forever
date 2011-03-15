@@ -2,10 +2,11 @@ require 'pathname'
 require "rubygems"
 require "bundler"
 Bundler.setup
-Bundler.require
+Bundler.require(:default)
+require 'open4'
 
 module SshForever
-  VERSION = '0.3.0'
+  VERSION = '0.4.0'
 
   class SecureShellForever
     def initialize(login, options = {})
@@ -13,6 +14,7 @@ module SshForever
       @options = options
       @hostname = @login.split("@")[1]
       @username = @login.split("@")[0]
+      local_ssh_config_path
       local_key_path
     end
 
@@ -104,7 +106,7 @@ module SshForever
 
 
     def run_shell_cmd(cmd)
-      status = Open4::popen4('sh') do |pid, stdin, stdout, stderr|
+      status = ::Open4::popen4('sh') do |pid, stdin, stdout, stderr|
         puts "debug: #{cmd}"  if @options[:debug]
         stdin.puts cmd
         stdin.close
@@ -177,7 +179,11 @@ module SshForever
     end
 
     def local_key_path
-      @options[:identity_file] = Pathname(@options[:identity_file]).expand_path.realdirpath.to_s
+      if RUBY_VERSION =~ /^1\.8\.7/
+        @options[:identity_file] = Pathname(@options[:identity_file]).expand_path.to_s
+      else
+        @options[:identity_file] = Pathname(@options[:identity_file]).expand_path.realdirpath.to_s
+      end
     end
 
     def public_key_path
