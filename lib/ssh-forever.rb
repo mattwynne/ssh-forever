@@ -27,14 +27,6 @@ module SshForever
 
       puts "Success. From now on you can just use plain old 'ssh'. Logging you in..."  unless @options[:quiet]
       status = run_shell_cmd(ssh_login(args))
-      exit 1 unless status.exitstatus.to_i == 0
-      if @options[:login]
-        if @options[:name]
-          `ssh #{@options[:name]}#{args}`   #TODO: fix this so that remote session is left open
-        else
-          `ssh #{@login}#{args}`
-        end
-      end
       # exitstatus 2 is when ssh-add can't find an agent on local machine.
       # We ought to switch to use Net::SSH libraries....
       exit 1 unless status.exitstatus.to_i == 0 || status.exitstatus.to_i == 2
