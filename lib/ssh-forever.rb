@@ -162,6 +162,15 @@ module SshForever
       login_command
     end
 
+    def ssh_login_interactive(args)
+      if @options[:name]
+        append_ssh_config unless existing_ssh_config?
+        login_command = "ssh #{@options[:name]}#{args}"
+      else
+        login_command = "ssh #{@login}#{args}"
+      end
+      login_command
+    end
 
     def flunk(message)
       STDERR.puts message
