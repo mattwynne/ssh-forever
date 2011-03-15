@@ -63,12 +63,38 @@ module SshForever
       host_config = <<-STUFF.gsub(/^ {6}/, '')
 
       Host #{@options[:name]}
-        HostName #{@login.split("@")[1]}
-        User #{@login.split("@")[0]}
-        PreferredAuthentications publickey
+        HostName #{@hostname}
+        User #{@username}
+        Port #{@options[:port]}
         IdentityFile #{public_key_path}
-        StrictHostKeyChecking #{@options[:strict] ? 'true' : 'false'}
-        HostKeyAlias #{@options[:name]}
+        Protocol 2
+        PreferredAuthentications publickey
+        PubkeyAuthentication yes
+        Batchmode yes
+        ChallengeResponseAuthentication no
+        CheckHostIP yes
+        StrictHostKeyChecking #{@options[:strict] ? 'yes' : 'no'}
+        HostKeyAlias #{@options[:name] ? @options[:name] : @hostname}
+        ConnectionAttempts 3
+        ControlMaser auto
+        ControlPath #{@local_ssh_config_path + '%h_%p_%r'}
+        ForwardAgent no
+        ForwardX11Trusted no
+        GatewayPorts yes
+        GSSAPIAuthentication no
+        GSSAPIDelegateCredentials no
+        HashKnownHosts yes
+        HostbasedAuthentication no
+        IdentitiesOnly yes
+        LogLevel #{@options[:debug] ? 'DEBUG3' : (@options[:quiet] ? 'QUIET' : 'INFO')}
+        NoHostAuthenticationForLocalhost yes
+        PasswordAuthentication no
+        PermitLocalCommand no
+        RekeyLimit 4G
+        ServerAliveCountMax #{@options[:intense] ? '1' : '3'}
+        ServerAliveInterval #{@options[:intense] ? '1' : '15'}
+        TCPKeepAlive yes
+        Tunnel no
       STUFF
     end
 
