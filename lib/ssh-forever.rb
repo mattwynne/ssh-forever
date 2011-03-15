@@ -1,5 +1,8 @@
 require 'pathname'
-require 'open4'
+require "rubygems"
+require "bundler"
+Bundler.setup
+Bundler.require
 
 module SshForever
   VERSION = '0.3.0'
@@ -8,7 +11,6 @@ module SshForever
     def initialize(login, options = {})
       @login   = login
       @options = options
-      local_ssh_config_path
       local_key_path
     end
 
@@ -42,18 +44,18 @@ module SshForever
     end
 
     def authorized_keys
-      (@local_ssh_config_path + '.ssh' + 'authorized_keys2').exist? ? 'authorized_keys2' : 'authorized_keys'
+      (local_ssh_config_path + '.ssh' + 'authorized_keys2').exist? ? 'authorized_keys2' : 'authorized_keys'
     end
 
     def append_ssh_config
       puts "Creating host entry in local ssh config with name #{@options[:name]}" unless @options[:quiet]
-      (@local_ssh_config_path + '.ssh' + 'config').open("a") do |config|
+      (local_ssh_config_path + '.ssh' + 'config').open("a") do |config|
         config << ssh_config
       end
     end
 
     def existing_ssh_config?
-      config = (@local_ssh_config_path + '.ssh' + 'config').read
+      config = (local_ssh_config_path + '.ssh' + 'config').read
       chk1 = config[/IdentityFile #{public_key_path}/] ? true : false
       chk2 = config[/Host #{@options[:name]}/] ? true : false
       chk1 && chk2 ? true : false
@@ -142,7 +144,7 @@ module SshForever
     end
 
     def public_key_path
-      File.expand_path(@options[:identity_file] || "#{@local_ssh_config_path + '.ssh' + 'id_rsa.pub'}")
+      File.expand_path(@options[:identity_file] || "#{local_ssh_config_path + '.ssh' + 'id_rsa.pub'}")
     end
 
   end
