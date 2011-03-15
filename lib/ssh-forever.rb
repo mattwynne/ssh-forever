@@ -8,11 +8,13 @@ module SshForever
     def initialize(login, options = {})
       @login   = login
       @options = options
+      @hostname = @login.split("@")[1]
+      @username = @login.split("@")[0]
       local_ssh_config_path
       local_key_path
     end
 
-    def run
+    def initialization_run
       unless File.exists?(public_key_path)
         STDERR.puts "You do not appear to have a public key. I expected to find one at #{public_key_path}"  unless @options[:quiet]
         confirm_keygen
@@ -33,6 +35,9 @@ module SshForever
           `ssh #{@login}#{args}`
         end
       end
+    def run_interactive
+      initialization_run
+      exec ssh_login_interactive(ssh_args)
     end
 
   private
