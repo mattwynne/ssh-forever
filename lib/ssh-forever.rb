@@ -82,7 +82,7 @@ module SshForever
         StrictHostKeyChecking #{@options[:strict] ? 'yes' : 'no'}
         HostKeyAlias #{@options[:name] ? @options[:name] : @hostname}
         ConnectionAttempts 3
-        ControlMaser auto
+        ControlMaster auto
         ControlPath #{@local_ssh_config_path + '%h_%p_%r'}
         ForwardAgent no
         ForwardX11Trusted no
@@ -96,7 +96,7 @@ module SshForever
         NoHostAuthenticationForLocalhost yes
         PasswordAuthentication no
         PermitLocalCommand no
-        RekeyLimit 4G
+        RekeyLimit 2G
         ServerAliveCountMax #{@options[:intense] ? '1' : '3'}
         ServerAliveInterval #{@options[:intense] ? '1' : '15'}
         TCPKeepAlive yes
