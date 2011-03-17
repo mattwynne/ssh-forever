@@ -2,7 +2,9 @@
 
 Simple command to give you password-less SSH login on remote servers:
 
-    ssh-forever username@yourserver.com [-p port] [-i identity_file] [-n name_for_future_use]
+    ssh-forever username@yourserver.com [options]
+    
+    see `ssh-forever --help` for details on the options availlable.
 
 ## Installation
 
@@ -32,13 +34,14 @@ Simple command to give you password-less SSH login on remote servers:
     [broncos]$ exit
     [matt@bowie ssh-forever (master)]$ ssh dreamhost
 
-## Why
+## Why?
 
 Because I can never remember how to do it by hand. Now I don't have to, and nor do you.
-
-## Options
-    ssh-forever -h
 
 ## Copyright
 
 Copyright (c) 2009 Matt Wynne. See LICENSE for details.
+
+## Disclaimer
+
+This is open source. If you're worried, read the code before you run it. Don't come crying to me if it fucks something up for you.

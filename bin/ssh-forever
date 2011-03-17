@@ -4,11 +4,15 @@ $:.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 require 'ssh-forever'
 require 'optparse'
 
-help = 'Usage: ssh-forever username@yourserver.com [-p port] [-i identity_file]'
+banner = %{Usage: ssh-forever username@yourserver.com [options]
+
+More info:
+  https://github.com/mattwynne/ssh-forever
+}
 
 options = {}
 OptionParser.new do |opts|
-  opts.banner = help
+  opts.banner = banner
 
   opts.on('-b', '--batch', "Run without interactive login", "Implies auto, intense, quiet and not login nor debug.") do |boolean|
     options[:batch] = true
@@ -47,12 +51,12 @@ OptionParser.new do |opts|
     options[:name] = name
   end
 
-  opts.on('-q', '--quite', "Run without output.") do |boolean|
+  opts.on('-q', '--quiet', "Run without output.") do |boolean|
     options[:quiet] = true
     options[:debug] = false
   end
 
-  opts.on('-s', '--strict', "SSH with stricthostkeychecking=yes (deafult:no)") do |boolean|
+  opts.on('-s', '--strict', "SSH with stricthostkeychecking=yes (default=no)") do |boolean|
     options[:strict] = true
   end
 
@@ -61,7 +65,7 @@ end.parse!
 login = ARGV[0]
 
 if login.nil?
-  puts help
+  puts banner + "  ssh-forever --help\n"
   exit 1
 end
 if options[:batch]
