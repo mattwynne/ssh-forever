@@ -1,3 +1,4 @@
+@slow
 Feature: Help
 
   In order to ensure SSH-Forever is well defined
@@ -24,8 +25,7 @@ Feature: Help
                                            If no data from the server after 1 second (default 15): Disconnect after 1 (default 3) unanswered 'server-alive' message.
           -n, --name [NAME]                SSH host name alias you wish to use.
           -q, --quiet                      Run without output.
-          -s, --strict                     SSH with stricthostkeychecking=yes (default=no)
-
+          -s, --strict                     SSH with stricthostkeychecking=yes (default:no)
       """
 
   Scenario Outline: Point to help when option is called incompletely
