@@ -8,8 +8,7 @@ Simple command to give you password-less SSH login on remote servers:
 
 ## Installation
 
-    gem sources --add http://gemcutter.org
-    sudo gem install ssh-forever
+    gem install ssh-forever
 
 ## Example:
 
