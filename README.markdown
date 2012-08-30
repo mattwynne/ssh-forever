@@ -37,10 +37,20 @@ Simple command to give you password-less SSH login on remote servers:
 
 Because I can never remember how to do it by hand. Now I don't have to, and nor do you.
 
+## What about ssh-copy-id?
+
+I'll admit that I wasn't aware of the [ssh-copy-id](http://linux.die.net/man/1/ssh-copy-id) unix 
+command when I wrote this tool. The main advantage that `ssh-forever` has over `ssh-copy-id` is that it 
+will automatically generate a public key for you if you don't already have one, making it a bit more
+user-friendly if you're not familiar with the SSH key system.
+
+You should probably try `ssh-copy-id` first. Many linux distros come with it built in. OSX users
+can install it with `brew install ssh-copy-id`
+
 ## Copyright
 
 Copyright (c) 2009 Matt Wynne. See LICENSE for details.
 
 ## Disclaimer
 
-This is open source. If you're worried, read the code before you run it. Don't come crying to me if it fucks something up for you.
+This is open source. If you're worried, read the code before you run it. Don't come crying to me if it breaks something for you.
